@@ -1,4 +1,8 @@
-SECTION "Splash Screen", ROM0
+SPLASH_ANM_SKIPPED_VBLANKS SET 1; 60
+SPLASH_DSP_SKIPPED_VBLANKS SET 1; 255
+SPLASH_DLY_SKIPPED_VBLANKS SET 1; 200
+
+SECTION "SPLASH_ASM", ROM0
 ; use this at ROM Main Entry Point
 doSplash:
 	; Turn off the LCD
@@ -27,3 +31,4 @@ doSplash:
 	call clearVRAM
 	
 	ret
+

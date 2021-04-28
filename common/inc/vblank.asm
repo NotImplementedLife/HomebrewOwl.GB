@@ -1,3 +1,4 @@
+SECTION "VBLANK_ASM", ROM0
 waitForVBlank:
 	ldh a, [rLY]          ; Load the current scanline
 	cp 144                ; 144 - 153 are within vblank

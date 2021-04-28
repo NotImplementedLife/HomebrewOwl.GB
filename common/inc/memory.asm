@@ -1,3 +1,5 @@
+SECTION "MEMORY_ASM", ROM0
+
 ; loadMemory
 ; arguments:
 ;	hl = destination address

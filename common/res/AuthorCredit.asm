@@ -119,7 +119,7 @@ copyAuthorCredit:
 	
 ; animateAuthorCredit
 animateAuthorCredit:
-	ld b, 200
+	ld b, SPLASH_DLY_SKIPPED_VBLANKS
 	call skipVBlanks
 	
 	ld hl, HbOwlPalettes	
@@ -128,7 +128,7 @@ animateAuthorCredit:
 .asc: ; fade in
 	ld a, [hli]
     ld [rBGP], a	
-	ld b, 60
+	ld b, SPLASH_ANM_SKIPPED_VBLANKS
 	call skipVBlanks
 	ld a, [rSCY]
 	inc a
@@ -139,7 +139,7 @@ animateAuthorCredit:
 	jr nz, .asc
 
 	REPT(2)
-		ld b, 255
+		ld b, SPLASH_DSP_SKIPPED_VBLANKS
 		call skipVBlanks	
 	ENDR
 		
@@ -147,7 +147,7 @@ animateAuthorCredit:
 .desc: ; fade out
 	ld a, [hld]
     ld [rBGP], a	
-	ld b, 60
+	ld b, SPLASH_ANM_SKIPPED_VBLANKS
 	call skipVBlanks
 	ld a, l		
 	and 7
@@ -156,7 +156,7 @@ animateAuthorCredit:
 	
 	ld a, [hld]
     ld [rBGP], a	
-	ld b, 60
+	ld b, SPLASH_ANM_SKIPPED_VBLANKS
 	call skipVBlanks	
 	
 	ret

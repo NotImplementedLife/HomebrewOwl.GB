@@ -44,13 +44,15 @@ SECTION "Header Padding", ROM0[$68]
 
 SECTION "Entrypoint", ROM0[$100]
   di
-  jp Start
+  jp SplashScreen
 
 SECTION "Nintendo Logo", ROM0[$104]
   NINTENDO_LOGO ; Defined in hardware.inc
 
+;--------------------------------------------------------------
 SECTION "Title", ROM0[$134]  
-  DB "TEST"
+  DB "TEMPLATE", 0
+;--------------------------------------------------------------
   
 SECTION "Product Code", ROM0[$13F]
   ; Leave blank.
