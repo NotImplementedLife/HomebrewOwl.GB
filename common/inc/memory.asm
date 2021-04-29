@@ -66,3 +66,24 @@ clearVRAM:
 	jr nz, .waitVRAM	
 	ret
 	
+;--------------------------------------------------------------
+initWRAM0:
+;--------------------------------------------------------------
+	ld hl, $C000
+	ld bc, $D000	
+	
+	.loop
+	; max. 18 cycles till  second jr .waitVRAM
+
+	xor a         
+	ld [hli], a   
+	
+	ld a, h       
+	cp b          
+	jr nz, .loop  
+	ld a, l           
+	cp c              
+	
+	jr nz, .loop
+	ret
+	
