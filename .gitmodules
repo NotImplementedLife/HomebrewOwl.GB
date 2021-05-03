@@ -1,0 +1,3 @@
+[submodule "rubik"]
+	path = rubik
+	url = https://github.com/NotImplementedLife/rubik

@@ -70,7 +70,7 @@ clearVRAM:
 initWRAM0:
 ;--------------------------------------------------------------
 	ld hl, $C000
-	ld bc, $D000	
+	ld bc, $E000	
 	
 	.loop
 	; max. 18 cycles till  second jr .waitVRAM

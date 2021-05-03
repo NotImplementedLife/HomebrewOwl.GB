@@ -20,7 +20,7 @@ rgbfix -v -p 0 %1.gb
 echo Cleaning...
 del main.o
 echo Launching...
-bgb64 %1.gb
+%1.gb
 echo Done.
 goto __PATH_EXIT__
 
