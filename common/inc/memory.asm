@@ -17,6 +17,32 @@ loadMemory:
     jr nz, loadMemory
 	ret
 
+; fillMemory0
+; arguments:
+;	hl = destination address
+;	bc = data size
+;--------------------------------------------------------------
+fillMemory0:	
+	ld a, $00
+    ld [hli], a           ; Place 0 at the destination, incrementing hl    
+    dec bc                ; Decrement count
+    ld a ,b               ; Check if count is 0, since `dec bc` doesn't update flags
+    or c
+    jr nz, fillMemory0
+	ret
+	
+; copyString
+; arguments:
+; hl = position on screen
+; de = string address
+copyString: 
+    ld a, [de]
+    ld [hli],a
+    inc de
+    and a ; check if the byte we copied is 0
+    jr nz, copyString ; Continue if it's not
+	ret
+
 	
 ;--------------------------------------------------------------
 loadMemorySTAT:

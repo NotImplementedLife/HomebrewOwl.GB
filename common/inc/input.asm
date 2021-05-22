@@ -9,6 +9,12 @@ SECTION "Input Memory", WRAM0
 	
 SECTION "Input Routine", ROM0
 
+initInputWRAM:
+	xor a
+	ld [wJoypadState], a
+	ld [wJoypadPressed], a
+	ret
+
 updateJoypadState:
   ld   hl, rP1
   ld   [hl], P1F_GET_BTN
