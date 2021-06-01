@@ -1,3 +1,8 @@
+;-INCLUDE------------------------------------------------------
+IF !DEF(COMMON_OAM_ASM)
+COMMON_OAM_ASM SET 1
+;-------------------------------------------------------INCLUDE
+
 ; Thxx : https://gbdev.gg8.se/wiki/articles/OAM_DMA_tutorial
 
 SECTION "OAM DMA routine", ROM0
@@ -27,3 +32,7 @@ SECTION "OAM DMA", HRAM
 
 hOAMDMA::
   DS DMARoutineEnd - DMARoutine ; Reserve space to copy the routine to
+  
+;--------------------------------------------------------------
+ENDC
+;-------------------------------------------------------INCLUDE

@@ -1,8 +1,0 @@
-[submodule "projects/rubik"]
-	path = projects/rubik
-	url = https://github.com/NotImplementedLife/rubik
-	branch = master
-[submodule "projects/AIRPLANZ"]
-	path = projects/AIRPLANZ
-	url = https://github.com/NotImplementedLife/AIRPLANZ
-	branch = master

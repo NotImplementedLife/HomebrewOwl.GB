@@ -1,10 +1,18 @@
+;-INCLUDE------------------------------------------------------
+IF !DEF(COMMON_SPLASH_ASM)
+COMMON_SPLASH_ASM SET 1
+;-------------------------------------------------------INCLUDE
+
+INCLUDE "../common/res/HomebrewOwlLogo.asm"
+
 SPLASH_ANM_SKIPPED_VBLANKS SET  60
 SPLASH_DSP_SKIPPED_VBLANKS SET  255
-SPLASH_DLY_SKIPPED_VBLANKS SET  200
+SPLASH_DLY_SKIPPED_VBLANKS SET  255
 
 SECTION "SPLASH_ASM", ROM0
 ; use this at ROM Main Entry Point
 doSplash:
+	call initInputWRAM	
 	; Turn off the LCD
 	call waitForVBlank	
     xor a                 
@@ -24,11 +32,9 @@ doSplash:
     ld [rLCDC], a
 	call animateHbOwlLogo
 	
-	call waitForVBlank	
-	
-	call copyAuthorCredit	    
-	call animateAuthorCredit
-	call clearVRAM
-	
+	call clearVRAM	
 	ret
 
+;--------------------------------------------------------------
+ENDC
+;-------------------------------------------------------INCLUDE

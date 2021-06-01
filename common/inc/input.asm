@@ -1,3 +1,7 @@
+;-INCLUDE------------------------------------------------------
+IF !DEF(COMMON_INPUT_ASM)
+COMMON_INPUT_ASM SET 1
+;-------------------------------------------------------INCLUDE
 
 ; source : https://github.com/daid/gameboy-assembly-by-example/blob/77c9547c2c3485bc0c3985beb0e8d67852edcece/misc/joypad.asm
 
@@ -52,3 +56,9 @@ updateJoypadState:
   ld   a, c
   ld   [wJoypadState], a
   ret
+  
+  
+;--------------------------------------------------------------
+ENDC
+;-------------------------------------------------------INCLUDE
+ 
