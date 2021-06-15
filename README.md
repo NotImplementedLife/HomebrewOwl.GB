@@ -1,4 +1,4 @@
-# NotImpOwl.GB
+# HomebrewOwl.GB
 Collection of my personal Gameboy projects
 
 | Id | Game title                                                 | Description                                                                                              |
