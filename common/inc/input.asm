@@ -3,12 +3,18 @@ IF !DEF(COMMON_INPUT_ASM)
 COMMON_INPUT_ASM SET 1
 ;-------------------------------------------------------INCLUDE
 
-; source : https://github.com/daid/gameboy-assembly-by-example/blob/77c9547c2c3485bc0c3985beb0e8d67852edcece/misc/joypad.asm
+; https://github.com/pinobatch/libbet/blob/49b27830bbce3092df4cdb50342f53724227e14b/src/pads.z80#L45-L95
+
+P1F_NONE     EQU $30
+P1F_BUTTONS  EQU $10
+P1F_DPAD     EQU $20
 
 SECTION "Input Memory", WRAM0
 	wJoypadState:   ; Contains the current state of the joypad.
+	cur_keys:
 	DS 1            ; Use the PADF_* or PADB_* constants to check for specific buttons.
 	wJoypadPressed: ; Contains newly pressed buttons of the joypad, for only 1 frame.
+	new_keys:
 	DS 1            ; Use the PADF_* or PADB_* constants to check for specific buttons.
 	
 SECTION "Input Routine", ROM0
@@ -20,44 +26,41 @@ initInputWRAM:
 	ret
 
 updateJoypadState:
-  ld   hl, rP1
-  ld   [hl], P1F_GET_BTN
-  ; After the initial enable we need to read twice to ensure
-  ; we get the proper hardware state on real hardware
-  ld   a, [hl]
-  ld   a, [hl]
-  ld   [hl], P1F_GET_DPAD
-  cpl  ; Inputs are active low, so a bit being 0 is a button pressed. So we invert this.
-  and  PADF_A | PADF_B | PADF_SELECT | PADF_START
-  ld   c, a  ; Store the lower 4 button bits in c
+    ; Poll half the controller
+    ld a,P1F_BUTTONS
+    call .onenibble
+    ld b,a  ; B7-4 = 1; B3-0 = unpressed buttons
 
-  ; We need to read rP1 8 times to ensure the proper button state is available.
-  ; This is only needed on real hardware, as it takes a while for the
-  ; inputs to change state back from the first set.
-  ld   b, 8
-.dpadDebounceLoop:
-  ld   a, [hl]
-  dec  b
-  jr   nz, .dpadDebounceLoop
-  ld   [hl], P1F_GET_NONE ; Disable the joypad inputs again, saves a tiny bit of power and allows the lines to settle before the next read
+    ; Poll the other half
+    ld a,P1F_DPAD
+    call .onenibble
+    swap a   ; A3-0 = unpressed directions; A7-4 = 1
+    xor b    ; A = pressed buttons + directions
+    ld b,a   ; B = pressed buttons + directions
 
-  swap a ; We want the directional keys as upper 4 bits, so swap the nibbles.
-  cpl  ; Inputs are active low, so a bit being 0 is a button pressed. So we invert this.
-  and  PADF_RIGHT | PADF_LEFT | PADF_UP | PADF_DOWN
-  or   c
-  ld   c, a
+    ; And release the controller
+    ld a,P1F_NONE
+    ld [rP1],a
 
-  ; Compare the new joypad state with the previous one, and store the
-  ; new bits in wJoypadPressed
-  ld   hl, wJoypadState
-  xor  [hl]
-  and  c
-  ld   [wJoypadPressed], a
-  ld   a, c
-  ld   [wJoypadState], a
-  ret
-  
-  
+    ; Combine with previous cur_keys to make new_keys
+    ld a,[cur_keys] 
+    xor b    ; A = keys that changed state
+    and b    ; A = keys that changed to pressed
+    ld [new_keys],a 
+    ld a,b
+    ld [cur_keys],a
+    ret
+
+.onenibble:
+    ldh [rP1],a     ; switch the key matrix
+    call .knownret  ; burn 10 cycles calling a known ret
+    ldh a,[rP1]     ; ignore value while waiting for the key matrix to settle
+    ldh a,[rP1]
+    ldh a,[rP1]     ; this read counts
+    or $F0   ; A7-4 = 1; A3-0 = unpressed keys
+.knownret:
+    ret
+
 ;--------------------------------------------------------------
 ENDC
 ;-------------------------------------------------------INCLUDE

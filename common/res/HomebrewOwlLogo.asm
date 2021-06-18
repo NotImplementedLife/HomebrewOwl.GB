@@ -296,8 +296,8 @@ animateHbOwlLogo:
 .asc: ; fade in
 	ld a, [hli]
     ld [rBGP], a	
-	ld b, SPLASH_ANM_SKIPPED_VBLANKS
-	call skipVBlanks
+	ld b, SPLASH_ANM_SKIPPED_VBLANKS	
+	call skipVBlanks	
 	ld a, [rSCY]
 	inc a
 	ld [rSCY], a
