@@ -4,13 +4,33 @@ COMMON_VBLANK_ASM SET 1
 ;-------------------------------------------------------INCLUDE
 
 INCLUDE "../common/inc/input.asm"
+INCLUDE "../common/macros.inc"
+
+SECTION "VBlank Interrupt", ROM0[$40]
+	push af
+    xor a
+    ldh [hVBlankFlag], a
+    pop af
+    reti
+	
+SECTION "Vblank VARS", HRAM
+hVBlankFlag:
+	DS 1
 
 SECTION "VBLANK_ASM", ROM0
+
 waitForVBlank:
-	ldh a, [rLY]          ; Load the current scanline
-	cp 144                ; 144 - 153 are within vblank
-	jr nz, waitForVBlank  ; Loop if != 144
-	ret
+;	ldh a, [rLY]          ; Load the current scanline
+;	cp 144                ; 144 - 153 are within vblank
+;	jr nz, waitForVBlank  ; Loop if != 144
+;	ret
+    halt
+    nop
+    ldh a, [hVBlankFlag]
+    and a
+    jr nz, waitForVBlank
+	ret	
+
 	
 ; b = number of iterations (b != 0)
 skipVBlanks:
