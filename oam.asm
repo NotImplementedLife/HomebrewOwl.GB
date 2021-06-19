@@ -3,7 +3,7 @@
 rDMA EQU $FF46
 
 SECTION "OAM DMA routine", ROM0
-CopyDMARoutine:
+CopyDMARoutine::
 	ld  hl, DMARoutine
 	ld  b, DMARoutineEnd - DMARoutine ; Number of bytes to copy
 	ld  c, LOW(hOAMDMA) ; Low byte of the destination address
