@@ -1,7 +1,4 @@
-;-INCLUDE------------------------------------------------------
-IF !DEF(COMMON_INPUT_ASM)
-COMMON_INPUT_ASM SET 1
-;-------------------------------------------------------INCLUDE
+rP1 EQU $FF00
 
 ; https://github.com/pinobatch/libbet/blob/49b27830bbce3092df4cdb50342f53724227e14b/src/pads.z80#L45-L95
 
@@ -10,22 +7,22 @@ P1F_BUTTONS  EQU $10
 P1F_DPAD     EQU $20
 
 SECTION "Input Memory", WRAM0
-	wJoypadState:   ; Contains the current state of the joypad.
-	cur_keys:
+	wJoypadState::   ; Contains the current state of the joypad.
+	cur_keys::
 	DS 1            ; Use the PADF_* or PADB_* constants to check for specific buttons.
-	wJoypadPressed: ; Contains newly pressed buttons of the joypad, for only 1 frame.
-	new_keys:
+	wJoypadPressed:: ; Contains newly pressed buttons of the joypad, for only 1 frame.
+	new_keys::
 	DS 1            ; Use the PADF_* or PADB_* constants to check for specific buttons.
 	
 SECTION "Input Routine", ROM0
 
-initInputWRAM:
+MACRO initInputWRAM
 	xor a
 	ld [wJoypadState], a
 	ld [wJoypadPressed], a
-	ret
+ENDM
 
-updateJoypadState:
+updateJoypadState::
     ; Poll half the controller
     ld a,P1F_BUTTONS
     call .onenibble
@@ -60,8 +57,4 @@ updateJoypadState:
     or $F0   ; A7-4 = 1; A3-0 = unpressed keys
 .knownret:
     ret
-
-;--------------------------------------------------------------
-ENDC
-;-------------------------------------------------------INCLUDE
- 
+	

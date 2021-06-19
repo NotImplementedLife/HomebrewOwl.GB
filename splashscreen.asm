@@ -1,11 +1,13 @@
-;-INCLUDE------------------------------------------------------
-IF !DEF(COMMON_HBOWL_ASM)
-COMMON_HBOWL_ASM SET 1
-;-------------------------------------------------------INCLUDE
+rBGP EQU $FF47
+rSCX EQU $FF43
+rSCY EQU $FF42
+rLY EQU $FF44
+rLCDC EQU $FF40
 
-;--------------------------------------------------------------
+
+;SECTION----------------------------------------------------------------------------------------------
 SECTION "HbOwl Palettes", ROM0, ALIGN[3]
-;--------------------------------------------------------------
+;----------------------------------------------------------------------------------------------SECTION
 
 HbOwlPalettes:
 
@@ -13,9 +15,9 @@ DB %00000000, %01000000, %01010000, %01010100, %10010100, %10100100, %11100100
 
 HbOwlPalettesEnd:
 
-;--------------------------------------------------------------
+;SECTION----------------------------------------------------------------------------------------------
 SECTION "HbOwl Logo", ROM0
-;--------------------------------------------------------------
+;----------------------------------------------------------------------------------------------SECTION
 
 HbOwlLogoTiles:
 
@@ -257,6 +259,43 @@ DB $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $0
 
 HbOwlLogoEnd:
 
+;SECTION----------------------------------------------------------------------------------------------
+SECTION "HbOwl Logic", ROM0
+;----------------------------------------------------------------------------------------------SECTION
+
+waitForVBlank:	
+	ldh a, [rLY]          ; Load the current scanline
+	cp 144                ; 144 - 153 are within vblank
+	jr nz, waitForVBlank  ; Loop if != 144
+	ret	
+
+; b = number of iterations (b != 0)
+skipVBlanks:
+	call waitForVBlank
+	dec b
+	jr nz, skipVBlanks	
+	ret
+	
+; b = number of iterations (b != 0)
+skipVBlanksButBreakOnKey:
+	call waitForVBlank	
+	push hl
+	push bc
+	call updateJoypadState
+	pop bc
+	pop hl	
+	ld a, [wJoypadState]
+	cp a, 0
+	jr nz, .breakLoop
+	ld a, b	
+	cp 0	
+	dec b
+	jr nz, skipVBlanksButBreakOnKey
+	ret
+.breakLoop
+	ld c, 1	
+	ret
+
 ; copyHbOwlLogo
 ; 
 ; copies tileset and tilemap to VRAM
@@ -327,11 +366,40 @@ animateHbOwlLogo:
 	ld a, [hld]
     ld [rBGP], a	
 	ld b, SPLASH_ANM_SKIPPED_VBLANKS
-	call skipVBlanks	
-	
+	call skipVBlanks		
 	ret
 
-;--------------------------------------------------------------
-ENDC
-;-------------------------------------------------------INCLUDE
+	
+SPLASH_ANM_SKIPPED_VBLANKS SET  10
+SPLASH_DSP_SKIPPED_VBLANKS SET  120
+SPLASH_DLY_SKIPPED_VBLANKS SET  15
 
+;SECTION----------------------------------------------------------------------------------------------
+SECTION "SPLASH_ASM", ROM0
+;----------------------------------------------------------------------------------------------SECTION
+; used as ROM Main Entry Point
+doSplash::	
+	xor a
+	ld [wJoypadState], a
+	ld [wJoypadPressed], a
+	; Turn off the LCD
+	call waitForVBlank	
+    xor a                 
+    ld [rLCDC], a  
+	
+	; Init display registers
+	ld a, %11100100    
+    ld [rBGP], a
+    xor a ; ld a, 0
+    ld [rSCX], a
+    ld [rSCY], a    
+	
+	call copyHbOwlLogo
+	ld a, %00000000
+    ld [rBGP], a	
+    ld a, %10010001 ; turn screen on
+    ld [rLCDC], a
+	call animateHbOwlLogo
+	
+	call clearVRAM	
+	ret
