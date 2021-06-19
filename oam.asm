@@ -1,5 +1,7 @@
 ; Thxx : https://gbdev.gg8.se/wiki/articles/OAM_DMA_tutorial
 
+rDMA EQU $FF46
+
 SECTION "OAM DMA routine", ROM0
 CopyDMARoutine:
 	ld  hl, DMARoutine

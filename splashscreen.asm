@@ -370,15 +370,15 @@ animateHbOwlLogo:
 	ret
 
 	
-SPLASH_ANM_SKIPPED_VBLANKS SET  10
+SPLASH_ANM_SKIPPED_VBLANKS SET  30
 SPLASH_DSP_SKIPPED_VBLANKS SET  120
-SPLASH_DLY_SKIPPED_VBLANKS SET  15
+SPLASH_DLY_SKIPPED_VBLANKS SET  30
 
 ;SECTION----------------------------------------------------------------------------------------------
 SECTION "SPLASH_ASM", ROM0
 ;----------------------------------------------------------------------------------------------SECTION
 ; used as ROM Main Entry Point
-doSplash::	
+HbOwlSplashScreen::	
 	xor a
 	ld [wJoypadState], a
 	ld [wJoypadPressed], a
