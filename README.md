@@ -1,6 +1,6 @@
 # HomebrewOwl.GB
 
-_In Game Boy I trust..._
+_In GameBoy I trust..._
 
 Collection of my personal Gameboy projects
 
