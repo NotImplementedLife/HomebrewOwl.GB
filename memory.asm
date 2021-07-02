@@ -63,7 +63,37 @@ loadMemorySTAT::
 	
 	ld a, d           ; 1 cyc
 	cp b              ; 1 cyc
-	jr nz, .waitVRAM  ; 3/4 cyc
+	jr nz, .waitVRAM  ; 2/3 cyc
+	ld a, e           ; 1 cyc
+	cp c              ; 1 cyc
+	
+	jr nz, .waitVRAM
+	
+	ret
+	
+;--------------------------------------------------------------
+loadMemoryDOUBLE::
+;--------------------------------------------------------------
+;   Same as loadMemorySTAT, but loads two bytes on each HRAM.
+;   Assure that the number of bytes to copy is even.
+;--------------------------------------------------------------
+.waitVRAM
+    ldh a, [rSTAT]
+    and STATF_BUSY ; %0000_0010
+    jr nz, .waitVRAM	
+	
+	; max. 18 cycles till  second jr .waitVRAM
+	ld a, [de]        ; 2 cyc
+	ld [hli], a       ; 2 cyc
+	inc de            ; 2 cyc
+	
+	ld a, [de]        ; 2 cyc
+	ld [hli], a       ; 2 cyc
+	inc de            ; 2 cyc
+	
+	ld a, d           ; 1 cyc
+	cp b              ; 1 cyc
+	jr nz, .waitVRAM  ; 2/3 cyc
 	ld a, e           ; 1 cyc
 	cp c              ; 1 cyc
 	
