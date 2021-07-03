@@ -9,11 +9,11 @@ rLCDC EQU $FF40
 SECTION "HbOwl Palettes", ROMX, ALIGN[3]
 ;----------------------------------------------------------------------------------------------SECTION
 
-HbOwlPalettes:
+HbOwlPalettes::
 
 DB %00000000, %01000000, %01010000, %01010100, %10010100, %10100100, %11100100 
 
-HbOwlPalettesEnd:
+HbOwlPalettesEnd::
 
 ;SECTION----------------------------------------------------------------------------------------------
 SECTION "HbOwl Logo", ROMX
