@@ -288,4 +288,27 @@ HbOwlSplashScreen::
 	call animateHbOwlLogo
 	
 	call clearVRAM	
+	
+	ld hl, $8000 
+	ld de, GBCompo21Tiles
+	ld bc, GBCompo21TilesEnd
+	call loadMemoryDOUBLE
+	
+	ld hl, $9880
+	ld de, GBCompo21TM
+	ld bc, GBCompo21TMEnd
+	call loadMemoryDOUBLE
+	
+	ld a, %11100100
+	ldh [rBGP], a
+	
+	ld b, 0
+.lp
+	call waitForVBlank
+	call waitForVBlank
+	call waitForVBlank
+	dec b
+	jr nz, .lp
+	
+	call clearVRAM	
 	ret
