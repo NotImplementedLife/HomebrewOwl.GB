@@ -3,7 +3,9 @@ rSCX EQU $FF43
 rSCY EQU $FF42
 rLY EQU $FF44
 rLCDC EQU $FF40
-
+rWY EQU $FF4A
+rWX EQU $FF4B
+rOBP0 EQU $FF48
 
 ;SECTION----------------------------------------------------------------------------------------------
 SECTION "HbOwl Palettes", ROM0, ALIGN[3]
@@ -282,10 +284,14 @@ HbOwlSplashScreen::
 	
 	call copyHbOwlLogo
 	ld a, %00000000
-    ld [rBGP], a	
+    ldh [rBGP], a	
     ld a, %10010001 ; turn screen on
-    ld [rLCDC], a
+    ldh [rLCDC], a
 	call animateHbOwlLogo
+	
+	ld a, %01010101
+	ldh [rBGP], a
+	ldh [rOBP0], a
 	
 	call clearVRAM	
 	
@@ -299,16 +305,136 @@ HbOwlSplashScreen::
 	ld bc, GBCompo21TMEnd
 	call loadMemoryDOUBLE
 	
-	ld a, %11100100
-	ldh [rBGP], a
+	ld hl, $8D00
+	ld de, GbCompo21WindowTiles
+	ld bc, GbCompo21WindowTilesEnd
+	call loadMemoryDOUBLE
 	
-	ld b, 0
+	ld hl, $9C80
+	ld de, GbCompo21Wnd
+	ld bc, GbCompo21WndEnd
+	call loadMemoryDOUBLE
+	
+	ld hl, $8800
+	ld de, GbCompo21OamTiles
+	ld bc, GbCompo21OamTilesEnd
+	call loadMemoryDOUBLE
+	
+	call CopyDMARoutine
+	
+	call waitForVBlank
+	ld a, HIGH(GbCompo21Oam)
+	call hOAMDMA
+	
+	xor a
+	ldh [rWY], a
+	ld a, 87
+	ld [rWX], a
+	
+	ldh a, [rLCDC]
+	set 5, a ; window
+	set 6, a ; window $9C00
+	set 1, a ; OBJ on
+	set 2, a ; 8x16
+	ldh [rLCDC], a
+	ld b, 13
 .lp
 	call waitForVBlank
 	call waitForVBlank
 	call waitForVBlank
 	dec b
 	jr nz, .lp
+	
+	ld a, %11100100
+	ldh [rBGP], a
+	ldh [rOBP0], a
+	
+	ld b, 78
+.lp2
+	ld c, 7
+	.waitloop
+		call waitForVBlank
+		push bc
+		call updateJoypadState
+		pop bc
+		ld a, [wJoypadPressed]
+		or a
+		jr nz, .endGBCompoAnimation
+		dec c
+		jr nz, .waitloop
+	
+	ld hl, $FE00
+	ld a, 40
+	.innerLoop
+		inc l
+		dec [hl] ; coordX
+		inc l
+		inc l
+		inc l
+		dec a
+		jr nz, .innerLoop
+	ldh a, [rWX]
+	inc a
+	ldh [rWX], a
+	call waitForVBlank
+	dec b
+	jp nz, .lp2
+	
+.endGBCompoAnimation:
+	call waitForVBlank
+	ld hl, $FE00
+	ld a, 40
+.lastOamLoop
+	inc l
+	ld b, $00
+	ld [hl], b
+	inc l
+	inc l
+	inc l
+	dec a
+	jr nz, .lastOamLoop
+	
+	ld a, 170
+	ldh [rWX], a
+	
+	ld b, 0
+.lp3
+	call waitForVBlank
+	call waitForVBlank
+	call waitForVBlank
+	dec b
+	jr nz, .lp3
+	
+	ld a, %10100100
+	ldh [rBGP], a
+	call waitForVBlank
+	call waitForVBlank
+	call waitForVBlank
+	call waitForVBlank
+	call waitForVBlank
+	ld a, %10010000
+	ldh [rBGP], a
+	call waitForVBlank
+	call waitForVBlank
+	call waitForVBlank
+	call waitForVBlank
+	call waitForVBlank
+	ld a, %01010000
+	ldh [rBGP], a
+	call waitForVBlank
+	call waitForVBlank
+	call waitForVBlank
+	call waitForVBlank
+	call waitForVBlank
+	
+	ldh a, [rLCDC]
+	res 5, a ; window
+	res 6, a ; window $9C00
+	res 1, a ; OBJ on
+	res 2, a ; 8x16
+	ldh [rLCDC], a
+	xor a
+	ldh [rOBP0], a
 	
 	call clearVRAM	
 	ret
