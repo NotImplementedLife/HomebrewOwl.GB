@@ -1,4 +1,4 @@
-SECTION "GB Compo 21 Logo Tileset", ROMX
+SECTION "GB Compo 21 Logo Tileset", ROMX, BANK[1]
 
 GBCompo21Tiles::
 

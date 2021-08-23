@@ -1,4 +1,4 @@
-SECTION "GBCompo21 on map", ROMX
+SECTION "GBCompo21 on map", ROMX, BANK[1]
 
 GBCompo21TM::
 DB $00, $00, $00, $00, $00, $00, $01, $02, $03, $04, $05, $06, $07, $08, $09, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00,
@@ -24,7 +24,7 @@ GbCompo21WndEnd::
 
 
 iX EQU 0
-SECTION "GBCompo21 OAM", ROMX, ALIGN[8]
+SECTION "GBCompo21 OAM", ROMX, BANK[1], ALIGN[8]
 
 GbCompo21Oam::
 DB $30, iX+ $08, $80, $00
