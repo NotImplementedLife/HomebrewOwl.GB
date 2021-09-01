@@ -7,6 +7,21 @@ rWY EQU $FF4A
 rWX EQU $FF4B
 rOBP0 EQU $FF48
 
+rNR30 EQU $FF1A
+rNR31 EQU $FF1B
+rNR32 EQU $FF1C
+rNR33 EQU $FF1D
+rNR34 EQU $FF1E
+
+rNR41 EQU $FF20
+rNR42 EQU $FF21
+rNR43 EQU $FF22
+rNR44 EQU $FF23
+
+rNR50 EQU $FF24
+rNR51 EQU $FF25
+rNR52 EQU $FF26
+
 ;SECTION----------------------------------------------------------------------------------------------
 SECTION "HbOwl Palettes", ROM0, ALIGN[3]
 ;----------------------------------------------------------------------------------------------SECTION
@@ -217,6 +232,7 @@ animateHbOwlLogo:
 	ld b, SPLASH_DLY_SKIPPED_VBLANKS
 	call skipVBlanks
 	
+	ld c, 0
 	ld hl, HbOwlPalettes	
 	ld a, -6
 	ld [rSCY], a
@@ -225,6 +241,22 @@ animateHbOwlLogo:
     ld [rBGP], a	
 	ld b, SPLASH_ANM_SKIPPED_VBLANKS	
 	call skipVBlanks	
+	
+	xor a
+	ldh [rNR30], a ; sound 3 channel off
+	ld a, $80
+	ldh [rNR30], a ; sound 3 channel on
+	ld a, $40
+	ldh [rNR31], a
+	ld a, %01000000
+	ldh [rNR32], a
+	ld a, c
+	add $10
+	ld c, a
+	ldh [rNR33], a
+	ld a, %11000111
+	ldh [rNR34], a
+	
 	ld a, [rSCY]
 	inc a
 	ld [rSCY], a
@@ -262,9 +294,23 @@ SPLASH_ANM_SKIPPED_VBLANKS SET  30
 SPLASH_DSP_SKIPPED_VBLANKS SET  120
 SPLASH_DLY_SKIPPED_VBLANKS SET  30
 
+SECTION "Sound Samples", ROMX, BANK[1]
+
+;Sound_HbOwlGB::
+Sound_Sample::
+DB $33, $A2, $B4, $01, $64, $A2, $B4, $01, $64, $A2, $B4, $01, $64, $A2, $B4, $01
+;DB $00, $11, $22, $33, $44, $55, $66, $77, $88, $99, $AA, $BB, $CC, $DD, $EE, $FF
+DB $01, $23, $45, $67, $89, $AB, $CD, $EF, $FE, $DC, $BA, $98, $76, $54, $32, $10
+;DB $00, $00, $23, $F4, $32, $03, $45, $55, $54, $30, $03, $4A, $C4, $30, $0F, $00
+
+Sound_GBCompo::
+
+DB $64, $A2, $B4, $01, $64, $A2, $B4, $01, $64, $A2, $B4, $01, $64, $A2, $B4, $01
+
 ;SECTION----------------------------------------------------------------------------------------------
 SECTION "SPLASH_ASM", ROMX, BANK[1]
 ;----------------------------------------------------------------------------------------------SECTION
+nop
 ; used as ROM Main Entry Point
 HbOwlSplashScreen::	
 	xor a
@@ -282,11 +328,47 @@ HbOwlSplashScreen::
     ld [rSCX], a
     ld [rSCY], a    
 	
+	
 	call copyHbOwlLogo
 	ld a, %00000000
     ldh [rBGP], a	
     ld a, %10010001 ; turn screen on
     ldh [rLCDC], a
+	
+	; load sound	
+	ld a, $80
+	ldh [rNR52], a
+		
+	ld a, $44
+	ldh [rNR51], a
+		
+	ld a, $77
+	ldh [rNR50], a
+		
+	xor a
+	ldh [rNR30], a ; Sound 3 channel off
+		
+		
+	ld de, Sound_Sample
+	ld hl, $FF30
+	ld bc, 16
+	call loadMemory    
+			
+	ld a, $80
+	ldh [rNR30], a ; sound 3 channel on
+	
+	ld a, $FF
+	ldh [rNR31], a
+		
+	ld a, %01000000
+	ldh [rNR32], a
+		
+	ld a, %10000000
+	ldh [rNR33], a
+		
+	ld a, %11000000
+	ldh [rNR34], a
+	
 	call animateHbOwlLogo
 	
 	ld a, %01010101
@@ -337,6 +419,7 @@ HbOwlSplashScreen::
 	set 1, a ; OBJ on
 	set 2, a ; 8x16
 	ldh [rLCDC], a
+
 	ld b, 13
 .lp
 	call waitForVBlank
@@ -349,9 +432,37 @@ HbOwlSplashScreen::
 	ldh [rBGP], a
 	ldh [rOBP0], a
 	
+	call waitForVBlank
+	
+	ld b, 230
+.xlp
+	call waitForVBlank
+	dec b
+	jr nz, .xlp
+	
+	; fsssssssss
+	ld a, $80
+	ldh [rNR52], a
+	
+	ld a, $88
+	ldh [rNR51], a
+	
+	ld a, $77
+	ldh [rNR50], a
+	
+	ld  a, $3f
+	ldh [rNR41], a
+	ld  a, $f7
+	ldh [rNR42], a
+	ld  a, $11
+	ldh [rNR43], a
+	ld  a, $80
+	ldh [rNR44], a
+	
+	
 	ld b, 78
 .lp2
-	ld c, 7
+	ld c, 2
 	.waitloop
 		call waitForVBlank
 		push bc
