@@ -1,11 +1,9 @@
-rBGP EQU $FF47
 rSCX EQU $FF43
 rSCY EQU $FF42
 rLY EQU $FF44
 rLCDC EQU $FF40
 rWY EQU $FF4A
 rWX EQU $FF4B
-rOBP0 EQU $FF48
 
 rNR30 EQU $FF1A
 rNR31 EQU $FF1B
@@ -304,9 +302,7 @@ animateHbOwlLogo:
 	ld a, l		
 	cp -8
 	jr nz, .desc
-	
-	ld a, [hld]
-    ld [rBGP], a	
+		
 	ld b, SPLASH_ANM_SKIPPED_VBLANKS
 	call skipVBlanks		
 	ret
@@ -344,16 +340,12 @@ HbOwlSplashScreen::
     ld [rLCDC], a  
 	
 	; Init display registers
-	ld a, %11100100    
-    ld [rBGP], a
     xor a ; ld a, 0
     ld [rSCX], a
     ld [rSCY], a    
 	
 	
 	call copyHbOwlLogo
-	ld a, %00000000
-    ldh [rBGP], a	
     ld a, %10010001 ; turn screen on
     ldh [rLCDC], a
 	
@@ -525,27 +517,11 @@ HbOwlSplashScreen::
 	dec b
 	jr nz, .lp3
 	
-	ld a, %10100100
-	ldh [rBGP], a
+	ld b, 16
+.vblanks
 	call waitForVBlank
-	call waitForVBlank
-	call waitForVBlank
-	call waitForVBlank
-	call waitForVBlank
-	ld a, %10010000
-	ldh [rBGP], a
-	call waitForVBlank
-	call waitForVBlank
-	call waitForVBlank
-	call waitForVBlank
-	call waitForVBlank
-	ld a, %01010000
-	ldh [rBGP], a
-	call waitForVBlank
-	call waitForVBlank
-	call waitForVBlank
-	call waitForVBlank
-	call waitForVBlank
+	dec b
+	jr nz, .vblanks
 	
 	ldh a, [rLCDC]
 	res 5, a ; window
@@ -553,8 +529,6 @@ HbOwlSplashScreen::
 	res 1, a ; OBJ on
 	res 2, a ; 8x16
 	ldh [rLCDC], a
-	xor a
-	ldh [rOBP0], a
 	
 	call clearVRAM	
 	ret
