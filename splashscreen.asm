@@ -208,6 +208,12 @@ skipVBlanksButBreakOnKey:
 	jr nz, skipVBlanksButBreakOnKey
 	ret
 .breakLoop
+	ld a, $80
+	push hl
+	ld hl, hbOwlPalette0
+	ldh [rBGPI], a
+	call loadPaletteFromHL
+	pop hl
 	ld c, 1	
 	ret
 
