@@ -22,15 +22,29 @@ rNR50 EQU $FF24
 rNR51 EQU $FF25
 rNR52 EQU $FF26
 
+rBGPI EQU $FF68
+rBGPD EQU $FF69
+rOBPI EQU $FF6A
+rOBPD EQU $FF6B
+
+
 ;SECTION----------------------------------------------------------------------------------------------
-SECTION "HbOwl Palettes", ROM0, ALIGN[3]
+SECTION "HbOwl Palettes", ROM0, ALIGN[6]
 ;----------------------------------------------------------------------------------------------SECTION
 
-HbOwlPalettes::
+hbOwlPalette0: DB $7F, $FF,  $7F, $FF,  $7F, $FF,  $7F, $FF
+hbOwlPalette1: DB $7F, $FF,  $7F, $FF,  $7F, $FF,  $46, $31 
+hbOwlPalette3: DB $7F, $FF,  $7F, $FF,  $46, $31,  $46, $31 
+hbOwlPalette4: DB $7F, $FF,  $46, $31,  $46, $31,  $46, $31 
+hbOwlPalette5: DB $7F, $FF,  $46, $31,  $46, $31,  $00, $00
+hbOwlPalette6: DB $7F, $FF,  $46, $31,  $00, $00,  $00, $00
+hbOwlPalettesEnd:
 
-DB %00000000, %01000000, %01010000, %01010100, %10010100, %10100100, %11100100 
+;SECTION----------------------------------------------------------------------------------------------
+SECTION "Classic GB Palette", ROMX, BANK[1]
+;----------------------------------------------------------------------------------------------SECTION
 
-HbOwlPalettesEnd::
+GameboyPalette: DB $F3, $06,  $B1, $06,  $86, $19,  $E1, $04
 
 ;SECTION----------------------------------------------------------------------------------------------
 SECTION "HbOwl Logo", ROMX, BANK[1]
@@ -205,6 +219,10 @@ skipVBlanksButBreakOnKey:
 ; dependencies: memory.asm
 ;
 copyHbOwlLogo:
+
+	ld hl, hbOwlPalette0
+	call loadPaletteFromHL
+	
 	; copy digital tilemap to VRAM
 	ld hl, $8000
 	ld de, HbOwlLogoTiles
@@ -233,12 +251,14 @@ animateHbOwlLogo:
 	call skipVBlanks
 	
 	ld c, 0
-	ld hl, HbOwlPalettes	
+	ld hl, hbOwlPalette0
 	ld a, -6
 	ld [rSCY], a
 .asc: ; fade in
-	ld a, [hli]
-    ld [rBGP], a	
+	; init GBC palette
+	ld a, $80
+	ldh [rBGPI], a
+	call loadPaletteFromHL
 	ld b, SPLASH_ANM_SKIPPED_VBLANKS	
 	call skipVBlanks	
 	
@@ -261,8 +281,8 @@ animateHbOwlLogo:
 	inc a
 	ld [rSCY], a
 	ld a, l
-	and 7
-	cp HbOwlPalettesEnd-HbOwlPalettes
+	and 63
+	cp hbOwlPalettesEnd-hbOwlPalette0
 	jr nz, .asc
 
 	ld c, 0
@@ -272,15 +292,17 @@ animateHbOwlLogo:
 	ld a, c
 	ret nz	
 	
+	REPT(8)
 	dec l
+	ENDR
 .desc: ; fade out
-	ld a, [hld]
-    ld [rBGP], a	
+	ld a, $80
+	ldh [rBGPI], a
+    call loadPaletteFromHLd
 	ld b, SPLASH_ANM_SKIPPED_VBLANKS
 	call skipVBlanks
 	ld a, l		
-	and 7
-	cp 0
+	cp -8
 	jr nz, .desc
 	
 	ld a, [hld]
@@ -353,27 +375,8 @@ HbOwlSplashScreen::
 	ld hl, $FF30
 	ld bc, 16
 	call loadMemory    
-			
-	ld a, $80
-	ldh [rNR30], a ; sound 3 channel on
-	
-	ld a, $FF
-	ldh [rNR31], a
-		
-	ld a, %01000000
-	ldh [rNR32], a
-		
-	ld a, %10000000
-	ldh [rNR33], a
-		
-	ld a, %11000000
-	ldh [rNR34], a
 	
 	call animateHbOwlLogo
-	
-	ld a, %01010101
-	ldh [rBGP], a
-	ldh [rOBP0], a
 	
 	call clearVRAM	
 	
@@ -419,7 +422,16 @@ HbOwlSplashScreen::
 	set 1, a ; OBJ on
 	set 2, a ; 8x16
 	ldh [rLCDC], a
-
+	
+	ld a, $80
+	ldh [rBGPI], a
+	ldh [rOBPI], a
+	ld hl, GameboyPalette
+	call loadPaletteFromHL
+	ld hl, GameboyPalette
+	call loadObjPaletteFromHL
+	
+	
 	ld b, 13
 .lp
 	call waitForVBlank
@@ -428,10 +440,7 @@ HbOwlSplashScreen::
 	dec b
 	jr nz, .lp
 	
-	ld a, %11100100
-	ldh [rBGP], a
-	ldh [rOBP0], a
-	
+
 	call waitForVBlank
 	
 	ld b, 230
