@@ -10,3 +10,4 @@ Collection of my personal Gameboy projects
 |   1| [AIRPLANZ](https://github.com/NotImplementedLife/AIRPLANZ)             | APNZ        | Gameboy port of a pen & paper Battleship-like board game                               |
 |   2| [rubik](https://github.com/NotImplementedLife/rubik)                   | RBKC        | Rubik's cube simulator                                                                 |
 |   3| [Breksta's Cat](https://github.com/NotImplementedLife/brekstascat)     | BRKC        | Sliding puzzle game                                                                    |
+|   4| [Trabant](https://github.com/NotImplementedLife/Trabant)               | TRBT        | Very basic car driving demo                                                            |
