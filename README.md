@@ -1,13 +1,14 @@
+<p align="center"><img src="README_Resources/logo.PNG"></img></p>
 # HomebrewOwl.GB
 
 _In GameBoy I trust..._
 
 Collection of my personal Gameboy projects
 
-| Id | Game title                                                             | Game Id     | Description                                                                            |
-|---:|------------------------------------------------------------------------|-------------|----------------------------------------------------------------------------------------|
-|   0| [DIGIT CLOCK](https://github.com/NotImplementedLife/DIGIT-CLOCK)       | DGCL        | Gameboy Digital Clock display simulator                                                |
-|   1| [AIRPLANZ](https://github.com/NotImplementedLife/AIRPLANZ)             | APNZ        | Gameboy port of a pen & paper Battleship-like board game                               |
-|   2| [rubik](https://github.com/NotImplementedLife/rubik)                   | RBKC        | Rubik's cube simulator                                                                 |
-|   3| [Breksta's Cat](https://github.com/NotImplementedLife/brekstascat)     | BRKC        | Sliding puzzle game                                                                    |
-|   4| [Trabant](https://github.com/NotImplementedLife/Trabant)               | TRBT        | Very basic car driving demo                                                            |
+| Id | Game title                                                             | Game Id     | Description                                                                            | GBC-only                         | ROM size | Links                           |
+|---:|------------------------------------------------------------------------|-------------|----------------------------------------------------------------------------------------|----------------------------------|---------:|---------------------------------|
+|   0| [DIGIT CLOCK](https://github.com/NotImplementedLife/DIGIT-CLOCK)       | DGCL        | Gameboy Digital Clock display simulator                                                | ![](README_Resources/ic-no.png)  |     32KB | [<img src="README_Resources/ic-down.png">](https://github.com/NotImplementedLife/DIGIT-CLOCK/releases/download/1.0/DIGIT_CLOCK_1_0.gb) |
+|   1| [AIRPLANZ](https://github.com/NotImplementedLife/AIRPLANZ)             | APNZ        | Gameboy port of a pen & paper Battleship-like board game                               | ![](README_Resources/ic-no.png)  |     32KB | [<img src="README_Resources/ic-down.png">](https://github.com/NotImplementedLife/AIRPLANZ/releases/download/1.2/AIRPLANZ_1_2.gb)       [<img src="README_Resources/ic-ITCH.png">](https://notimplementedlife.itch.io/airplanz)    [<img src="README_Resources/ic-hhub.png">](https://hh.gbdev.io/game/AIRPLANZ) |
+|   2| [rubik](https://github.com/NotImplementedLife/rubik)                   | RBKC        | Rubik's cube simulator                                                                 | ![](README_Resources/ic-no.png)  |     32KB | [<img src="README_Resources/ic-down.png">](https://github.com/NotImplementedLife/rubik/releases/download/1.3/rubik_1_3.gb)             [<img src="README_Resources/ic-ITCH.png">](https://notimplementedlife.itch.io/rubik) |
+|   3| [Breksta's Cat](https://github.com/NotImplementedLife/brekstascat)     | BRKC        | Sliding puzzle game                                                                    | ![](README_Resources/ic-no.png)  |    128KB | [<img src="README_Resources/ic-down.png">](https://github.com/NotImplementedLife/brekstascat/releases/download/1.3/brekstascat_1_3.gb) [<img src="README_Resources/ic-ITCH.png">](https://notimplementedlife.itch.io/brekstascat) |
+|   4| [Trabant](https://github.com/NotImplementedLife/Trabant)               | TRBT        | Very basic car driving demo                                                            | ![](README_Resources/ic-yes.png) |     32KB | [<img src="README_Resources/ic-down.png">](https://github.com/NotImplementedLife/Trabant/releases/download/1.3/Trabant_1_3.gbc) [<img src="README_Resources/ic-ITCH.png">](https://notimplementedlife.itch.io/trabant)|
